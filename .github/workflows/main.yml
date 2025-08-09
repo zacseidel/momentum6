@@ -1,0 +1,54 @@
+name: Weekly Momentum Report
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # GitHub Actions uses UTC. Two crons handle DST for America/Denver (Fri 9:00am local):
+    # 15:00 UTC covers MDT (Mar–Nov), 16:00 UTC covers MST (Nov–Mar).
+    - cron: '0 9 * * 5'
+
+permissions:
+  contents: write   # needed to commit/push the generated files
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    env:
+      POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+      MPLBACKEND: Agg   # ensure matplotlib works headless
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # If your script relies on a .env file name or path, you can write one here from secrets.
+      # Otherwise, your code should read straight from env vars above.
+
+      - name: Run weekly report (Friday anchor)
+        run: |
+          python run_report.py
+
+      - name: Update index page
+        run: |
+          python generate_index.py
+
+      # Commit any changed / new report files, assets, etc.
+      - name: Commit & push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(reports): weekly update [skip ci]"
+          file_pattern: |
+            reports/*.html
+            index.html
+            assets/**/*

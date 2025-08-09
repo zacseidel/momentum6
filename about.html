@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>About – Momentum Screener</title>
+  <!-- Tailwind or other site‑wide CSS is loaded globally on the main page -->
+</head>
+<body>
+  <section id='about' class='prose mx-auto my-8'>
+    <h1 class='text-3xl font-semibold mb-4'>About This Site</h1>
+
+    <p><strong>Personal data project – <em>not</em> investment advice.</strong> This website is an individual experiment in quantitative equity analysis and web automation.  Everything you see here is provided strictly for educational and informational purposes.  It is <em>not</em> a solicitation to buy or sell securities, nor a substitute for professional financial advice.  Please do your own research and consult a licensed adviser before making any investment decisions.</p>
+
+    <p>The goal of the project is to surface the <em>relative momentum</em> leaders within the S&amp;P&nbsp;500&thinsp;® and S&amp;P&nbsp;400&thinsp;® universe—large and mid‑capitalization stocks whose prices have both <strong>(a)</strong> performed well over the last twelve months and <strong>(b)</strong> are still accelerating compared with the market benchmark.  Each Thursday after the close, an automated GitHub Action refreshes prices, reruns the screener, and publishes an updated HTML report so you can quickly see which companies are gaining strength heading into the weekend.</p>
+
+    <p><strong>Data pipeline.</strong> Daily close prices are pulled from Polygon.io’s grouped bars endpoint and cached in a lightweight SQLite database.  For the benchmark we use the Vanguard S&amp;P&nbsp;500 ETF (<code>VOO</code>) because Polygon’s direct index feed is occasionally unavailable.  Company profiles and recent headlines are retrieved via the same Polygon API, giving each company detail card basic data plus the five most recent news links.</p>
+
+    <p><strong>Momentum calculation.</strong> For every constituent ticker we measure its <em>12‑month total return</em>:</p>
+
+    <pre class='bg-gray-100 p-4 overflow-x-auto'><code>Total&nbsp;Return&nbsp;(%):&nbsp;((P<sub>today</sub>&nbsp;&minus;&nbsp;P<sub>252 trading&nbsp;days&nbsp;ago</sub>)&nbsp;/&nbsp;P<sub>252</sub>) × 100</code></pre>
+
+    <p>After we've calculated the momentum, we rank all 500 names from strongest to weakest and record each ticker’s <em>rank</em> (1 = best, 500 = worst).  The screener then compares this month's rank to last month's rank; stocks that are <em>both</em> in the top 10 <em>and</em> still moving up are flagged as momentum leaders.</p>
+
+    <p>Since companies that have strong momentum for an extended period eventually become the largest stocks in the index, we give the largest stocks additional focus.  The "Megacap" section provides this same ranking for the Top 25 stocks in the SP500 index.  It looks at the top 10 of those 25 in terms of momentum, then displays the top 5 of them sorted by market capitalization (in descending order), followed by the next 5.</p>
+
+    <p>The same calculation is performed for the SP400 as well.  It should be noted that the SP400 stocks seem to rotate in and out of the top momentum leaders with greater frequency than the SP500 stocks.</p>
+
+    <p><strong>What you’ll see on each card.</strong> For every selected company the report shows the ticker, official name, latest close.  Below this, the report displays a chart of the stock for the last year, with candle plots for daily price ranges, and the volume candles.  The chart also shows the 10-day and 50-day moving averages for the stock, as well as a comparison to the index (benchmarked to 150 days ago) in the dashed yellow line.  Below the chart, the card displays the the current 12M return, the 12M return as of this. time last month, the change in rank for 12M return since last week, and the return of the stock in the last week.  It also lists the description of the company, as well as a set of recent news articles.  Clicking on the stock symbol in the summary section will take you to the card, and each detail card has a link to take you back to the summary.</p>
+
+    <p><strong>Caveats</strong> The screener ignores dividends, corporate actions, bid–ask spreads, and liquidity constraints; it also does not account for risk, valuation, or position sizing.  Treat the output as a starting point for further analysis.  Again - this is not investment advice, just a fun way to present some interesting data.</p>
+  </section>
+</body>
+</html>

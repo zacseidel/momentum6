@@ -1,0 +1,13 @@
+# versions that play nicely with Python 3.9.12
+numpy<2
+pandas>=2,<2.2
+httpx>=0.27
+pytest
+pytest-asyncio
+openpyxl>=3.1
+python-dotenv>=1.0
+pandas>=2.2
+requests>=2.32
+jinja2>=3.1
+matplotlib>=3.8
+mplfinance>=0.12.10b0

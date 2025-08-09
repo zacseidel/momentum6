@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Momentum Screener Reports</title>
+  <style>
+    body { display:flex; font-family:sans-serif; margin:0; }
+    nav  { width:240px; background:#f4f4f4; height:100vh; overflow-y:auto;
+            padding:1em; box-shadow:2px 0 5px rgba(0,0,0,0.1); }
+    nav h2 { font-size:16px; margin-top:1em; }
+    nav a  { display:block; margin:0.5em 0; color:#333; text-decoration:none; }
+    nav a:hover { text-decoration:underline; }
+    nav a.active { font-weight:bold; }
+    main { flex-grow:1; padding:1em; }
+    iframe { width:100%; height:95vh; border:none; }
+  </style>
+</head>
+<body>
+  <nav>
+    <h2>🗂️ Weekly Reports</h2>
+    <a href='#' class='active' data-file='reports/momentum_2025-08-08.html' onclick="loadReport('reports/momentum_2025-08-08.html', this)">August 08, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-08-01.html' onclick="loadReport('reports/momentum_2025-08-01.html', this)">August 01, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-07-18.html' onclick="loadReport('reports/momentum_2025-07-18.html', this)">July 18, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-07-04.html' onclick="loadReport('reports/momentum_2025-07-04.html', this)">July 04, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-06-27.html' onclick="loadReport('reports/momentum_2025-06-27.html', this)">June 27, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-06-20.html' onclick="loadReport('reports/momentum_2025-06-20.html', this)">June 20, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-06-13.html' onclick="loadReport('reports/momentum_2025-06-13.html', this)">June 13, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-06-06.html' onclick="loadReport('reports/momentum_2025-06-06.html', this)">June 06, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-05-30.html' onclick="loadReport('reports/momentum_2025-05-30.html', this)">May 30, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-05-23.html' onclick="loadReport('reports/momentum_2025-05-23.html', this)">May 23, 2025</a>
+<a href='#'  data-file='reports/momentum_2025-05-16.html' onclick="loadReport('reports/momentum_2025-05-16.html', this)">May 16, 2025</a>
+    <h2>📘 Documentation</h2>
+    <a href="#" onclick="loadReport('about.html', this)">About this Site</a>
+  </nav>
+  <main>
+    <!-- Auto-load the most recent report here -->
+    <iframe id="reportFrame" src="reports/momentum_2025-08-08.html"></iframe>
+  </main>
+  <script>
+    function setActive(link) {
+      document.querySelectorAll('nav a.active').forEach(a => a.classList.remove('active'));
+      if (link) link.classList.add('active');
+    }
+    function loadReport(p, el) {
+      document.getElementById('reportFrame').src = p;
+      setActive(el);
+    }
+  </script>
+</body>
+</html>
