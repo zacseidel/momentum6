@@ -45,11 +45,48 @@ def ensure_tables() -> None:
 # ────────────────────────────────────────────────────────────────────────
 # Polygon fetchers
 # ────────────────────────────────────────────────────────────────────────
+# add near your config
+BACKOFF_SEC = 61
+MAX_TRIES = 5
+
+_session = requests.Session()
+_session.headers.update({"User-Agent": "momentum-screener/1.0"})
+
+def _sleep_polite(seconds: float) -> None:
+    # FAST_MODE short-circuits long waits to ~1s for local tests
+    sleep(1.0 if FAST_MODE else seconds)
+
+def _get_json_with_backoff(url: str, params: Dict, timeout: int = 15) -> Dict:
+    last_exc = None
+    for attempt in range(1, MAX_TRIES + 1):
+        try:
+            r = _session.get(url, params=params, timeout=timeout)
+            if r.status_code in (429, 503):
+                ra = r.headers.get("Retry-After")
+                try:
+                    wait = float(ra) if ra is not None else BACKOFF_SEC
+                except ValueError:
+                    wait = BACKOFF_SEC
+                _sleep_polite(wait)
+                continue
+            r.raise_for_status()
+            return r.json()
+        except requests.RequestException as e:
+            last_exc = e
+            if attempt < MAX_TRIES:
+                _sleep_polite(min(5 * attempt, 15))  # brief wait on transient errors
+            else:
+                break
+    raise last_exc if last_exc else RuntimeError("Failed after backoff")
+
+
+
+
+
+
 def fetch_company_metadata(ticker: str) -> Dict[str, str]:
     url = f"https://api.polygon.io/v3/reference/tickers/{ticker.upper()}"
-    r = requests.get(url, params={"apiKey": POLYGON_API_KEY}, timeout=15)
-    r.raise_for_status()
-    data = r.json().get("results", {})
+    data = _get_json_with_backoff(url, params={"apiKey": POLYGON_API_KEY}).get("results", {})
     return {
         "ticker": ticker.upper(),
         "name": data.get("name"),
@@ -66,9 +103,8 @@ def fetch_company_news(ticker: str, limit: int = NEWS_LIMIT) -> List[Dict[str, s
         "sort": "published_utc",
         "apiKey": POLYGON_API_KEY,
     }
-    r = requests.get(url, params=params, timeout=15)
-    r.raise_for_status()
-    return r.json().get("results", [])
+    data = _get_json_with_backoff(url, params=params)
+    return data.get("results", [])
 
 # ────────────────────────────────────────────────────────────────────────
 # Public entrypoint
@@ -96,10 +132,8 @@ def cache_company_data(tickers: List[str]) -> None:
                 "SELECT updated_at FROM company_metadata WHERE ticker = ?", (tkr,)
             )
             row = cur.fetchone()
-            meta_fresh = (
-                row
-                and datetime.fromisoformat(row[0]) > ttl_cutoff
-            )
+            meta_fresh = bool(row and row[0] and datetime.fromisoformat(row[0]) > ttl_cutoff)
+
 
             # ── recent news check
             cur.execute(

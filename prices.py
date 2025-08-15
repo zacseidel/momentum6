@@ -12,7 +12,13 @@ from dotenv import load_dotenv
 from universe import UniverseService
 
 load_dotenv()
-API_KEY = os.getenv("POLYGON_API_KEY")
+API_KEY = (os.getenv("POLYGON_API_KEY") or os.getenv("POLYGON_KEY") or "").strip()
+if not API_KEY:
+    raise RuntimeError(
+        "Missing Polygon key. Set POLYGON_API_KEY (or POLYGON_KEY) in your environment/.env."
+    )
+
+
 DB_PATH  = Path("data/market_data.sqlite")
 
 # ────────────────────────────────────────────────────────────────────────────
