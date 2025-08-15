@@ -18,7 +18,7 @@ from ranking  import (
     store_top10_mega_picks, store_top10_picks, store_top10_mdy_picks,
 )
 from report   import cache_company_data
-from emailer  import format_html_report, send_email_via_sendgrid
+from emailer  import format_html_report
 
 
 load_dotenv()
