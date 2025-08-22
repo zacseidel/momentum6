@@ -3,12 +3,14 @@ name: Weekly Momentum Report
 on:
   workflow_dispatch: {}
   schedule:
-    # GitHub Actions uses UTC. Two crons handle DST for America/Denver (Fri 9:00am local):
-    # 15:00 UTC covers MDT (Mar–Nov), 16:00 UTC covers MST (Nov–Mar).
+    # GitHub Actions uses UTC. (Fri 03:00 MDT / 02:00 MST ~ 09:00 UTC)
     - cron: '0 9 * * 5'
 
+# ✅ Needed for deploy-pages
 permissions:
-  contents: write   # needed to commit/push the generated files
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build-and-run:
@@ -32,9 +34,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # If your script relies on a .env file name or path, you can write one here from secrets.
-      # Otherwise, your code should read straight from env vars above.
-
       - name: Run weekly report (Friday anchor)
         run: |
           python run_report.py
@@ -44,6 +43,7 @@ jobs:
           python generate_index.py
 
       # Commit any changed / new report files, assets, etc.
+      # 👍 Keep [skip ci] now that deploy happens in this same workflow (prevents infinite loops)
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -52,3 +52,19 @@ jobs:
             reports/*.html
             index.html
             assets/**/*
+
+      # --- GitHub Pages deploy in THIS workflow ---
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Publish the repo root (since index.html + reports/ are in root)
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+
