@@ -3,21 +3,31 @@ name: Weekly Momentum Report
 on:
   workflow_dispatch: {}
   schedule:
-    # GitHub Actions uses UTC. (Fri 03:00 MDT / 02:00 MST ~ 09:00 UTC)
     - cron: '0 9 * * 5'
 
-# ✅ Needed for deploy-pages
+# ✅ Add Pages permissions
 permissions:
   contents: write
   pages: write
   id-token: write
 
+# (Optional) keep only one live deployment at a time
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
+
+    # ✅ REQUIRED by actions/deploy-pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     env:
       POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
-      MPLBACKEND: Agg   # ensure matplotlib works headless
+      MPLBACKEND: Agg
 
     steps:
       - name: Checkout
@@ -35,15 +45,11 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run weekly report (Friday anchor)
-        run: |
-          python run_report.py
+        run: python run_report.py
 
       - name: Update index page
-        run: |
-          python generate_index.py
+        run: python generate_index.py
 
-      # Commit any changed / new report files, assets, etc.
-      # 👍 Keep [skip ci] now that deploy happens in this same workflow (prevents infinite loops)
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -53,18 +59,14 @@ jobs:
             index.html
             assets/**/*
 
-      # --- GitHub Pages deploy in THIS workflow ---
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Publish the repo root (since index.html + reports/ are in root)
-          path: '.'
+          path: '.'   # publish repo root
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-
