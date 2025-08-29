@@ -4,6 +4,7 @@ import os, sqlite3, requests, io
 from datetime import date, timedelta
 from typing import Optional, Tuple
 from pathlib import Path
+import time
 from time import sleep
 
 import pandas as pd
