@@ -3,19 +3,31 @@ name: Weekly Momentum Report
 on:
   workflow_dispatch: {}
   schedule:
-    # GitHub Actions uses UTC. Two crons handle DST for America/Denver (Fri 9:00am local):
-    # 15:00 UTC covers MDT (Mar–Nov), 16:00 UTC covers MST (Nov–Mar).
     - cron: '0 9 * * 5'
 
+# ✅ Add Pages permissions
 permissions:
-  contents: write   # needed to commit/push the generated files
+  contents: write
+  pages: write
+  id-token: write
+
+# (Optional) keep only one live deployment at a time
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
+
+    # ✅ REQUIRED by actions/deploy-pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     env:
       POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
-      MPLBACKEND: Agg   # ensure matplotlib works headless
+      MPLBACKEND: Agg
 
     steps:
       - name: Checkout
@@ -32,18 +44,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # If your script relies on a .env file name or path, you can write one here from secrets.
-      # Otherwise, your code should read straight from env vars above.
-
       - name: Run weekly report (Friday anchor)
-        run: |
-          python run_report.py
+        run: python run_report.py
 
       - name: Update index page
-        run: |
-          python generate_index.py
+        run: python generate_index.py
 
-      # Commit any changed / new report files, assets, etc.
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -52,3 +58,15 @@ jobs:
             reports/*.html
             index.html
             assets/**/*
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'   # publish repo root
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
