@@ -96,6 +96,6 @@ def main():
     html = build_html(reports)
     INDEX_PATH.write_text(html, encoding="utf-8")
     print(f"✅  index.html regenerated ({len(reports)} reports listed; newest auto-loaded)")
-
+    print(f"Most recent report: {reports[0][1]}")
 if __name__ == "__main__":
     main()
