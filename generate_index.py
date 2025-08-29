@@ -97,5 +97,6 @@ def main():
     INDEX_PATH.write_text(html, encoding="utf-8")
     print(f"✅  index.html regenerated ({len(reports)} reports listed; newest auto-loaded)")
     print(f"Most recent report: {reports[0][1]}")
+    print(f"Open {INDEX_PATH} in your browser to view.")
 if __name__ == "__main__":
     main()
