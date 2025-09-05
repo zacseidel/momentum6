@@ -155,9 +155,9 @@ def format_html_report(top10_mega_df, top10_spy_df, top10_mdy_df, report_date=No
         <h2>📈 Momentum Report – {{ date }}</h2>
 
         <!-- ===== SUMMARY ===== -->
-        <h3>Megacap Stocks - Top 25 stocks by Market Cap in the SP500</h3> {{ mega_summary | safe }}
-        <h3>S&P 500 - Large Cap Stocks</h3>  {{ spy_summary  | safe }}
-        <h3>S&P 400 - MidCap Stocks</h3>  {{ mdy_summary  | safe }}
+        <h3 id = "summary-MEGA">Megacap Stocks - Top 25 stocks by Market Cap in the SP500</h3> {{ mega_summary | safe }}
+        <h3 id = "summary-SPY">S&P 500 - Large Cap Stocks</h3>  {{ spy_summary  | safe }}
+        <h3 id = "summary-MDY">S&P 400 - MidCap Stocks</h3>  {{ mdy_summary  | safe }}
 
         <!-- ===== ENRICHED ===== -->
         <h2>Detail for each Company</h2>
