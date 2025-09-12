@@ -50,10 +50,29 @@ jobs:
       - name: Update index page
         run: python generate_index.py
 
+      - name: Debug verify index and changes
+        run: |
+          echo "=== Top of index.html ==="
+          sed -n '1,80p' index.html
+          echo
+          echo "=== Has 2025-09-12? ==="
+          grep -n "2025-09-12" index.html || true
+          echo
+          echo "=== Git status (before commit) ==="
+          git status --porcelain
+          echo
+          echo "=== Changed files ==="
+          git diff --name-only || true
+          echo
+          echo "=== Reports dir ==="
+          ls -lah reports | tail -n +1
+
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(reports): weekly update [skip ci]"
+          # Make sure we stage EVERYTHING we care about, even if untracked
+          add_options: -A
           file_pattern: |
             reports/*.html
             index.html
