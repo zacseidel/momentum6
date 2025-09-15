@@ -32,6 +32,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -50,10 +53,37 @@ jobs:
       - name: Update index page
         run: python generate_index.py
 
+      - name: Debug verify index and changes
+        run: |
+          echo "=== Top of index.html ==="
+          sed -n '1,80p' index.html
+          echo
+          echo "=== Has 2025-09-12? ==="
+          grep -n "2025-09-12" index.html || true
+          echo
+          echo "=== Git status (before commit) ==="
+          git status --porcelain
+          echo
+          echo "=== Changed files ==="
+          git diff --name-only || true
+          echo
+          echo "=== Reports dir ==="
+          ls -lah reports | tail -n +1
+
+      - name: Debug git branch & remote
+        run: |
+          echo "=== Current branch ==="
+          git rev-parse --abbrev-ref HEAD || true
+          echo "=== Remote ==="
+          git remote -v || true
+
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
+          branch: ${{ github.ref_name }}
           commit_message: "chore(reports): weekly update [skip ci]"
+          # Make sure we stage EVERYTHING we care about, even if untracked
+          add_options: -A
           file_pattern: |
             reports/*.html
             index.html
