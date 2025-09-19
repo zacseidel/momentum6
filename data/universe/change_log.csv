@@ -936,3 +936,15 @@ run_date,cohort,action,symbol
 2025-05-16,sp500,removed,PSKY
 2025-08-01,sp500,added,PSKY
 2025-08-01,sp500,removed,PARA
+2025-09-19,sp500,added,IBKR
+2025-09-19,sp500,removed,WBA
+2025-09-19,sp400,added,TWLO
+2025-09-19,sp400,added,ELAN
+2025-09-19,sp400,added,TLN
+2025-09-19,sp400,added,FTI
+2025-09-19,sp400,removed,IBKR
+2025-09-19,sp400,removed,SKX
+2025-09-19,sp400,removed,AMED
+2025-09-19,sp400,removed,SRPT
+2025-09-19,megacap,added,GE
+2025-09-19,megacap,removed,CVX
