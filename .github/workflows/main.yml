@@ -84,10 +84,6 @@ jobs:
           commit_message: "chore(reports): weekly update [skip ci]"
           # Make sure we stage EVERYTHING we care about, even if untracked
           add_options: -A
-          file_pattern: |
-            reports/*.html
-            index.html
-            assets/**/*
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
