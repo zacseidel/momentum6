@@ -973,3 +973,6 @@ run_date,cohort,action,symbol
 2025-10-10,megacap,removed,GE
 2025-10-17,sp400,removed,GME.WT
 2025-10-31,sp500,added,SOLS
+2025-11-07,sp500,added,Q
+2025-11-07,sp500,removed,KMX
+2025-11-07,sp500,removed,EMN
