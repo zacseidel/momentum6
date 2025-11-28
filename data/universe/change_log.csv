@@ -982,3 +982,5 @@ run_date,cohort,action,symbol
 2025-11-14,sp400,removed,LNW
 2025-11-21,sp400,added,STRL
 2025-11-21,sp400,removed,LNWO
+2025-11-28,sp500,added,RE
+2025-11-28,sp500,removed,EG
