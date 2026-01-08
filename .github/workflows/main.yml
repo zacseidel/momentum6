@@ -2,8 +2,8 @@ name: Weekly Momentum Report
 
 on:
   workflow_dispatch: {}
-  schedule:
-    - cron: '0 9 * * 5'
+#  schedule:
+#    - cron: '0 9 * * 5'
 
 # ✅ Add Pages permissions
 permissions:
