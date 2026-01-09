@@ -1018,3 +1018,10 @@ run_date,cohort,action,symbol
 2025-12-26,sp400,removed,UAA
 2026-01-02,megacap,added,ORCL
 2026-01-02,megacap,removed,GE
+2026-01-09,sp400,added,PATH
+2026-01-09,sp400,removed,FG
+2026-01-09,sp400,removed,SNV
+2026-01-09,megacap,added,MU
+2026-01-09,megacap,added,GE
+2026-01-09,megacap,removed,PG
+2026-01-09,megacap,removed,ORCL
